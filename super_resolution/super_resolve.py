@@ -10,8 +10,6 @@ import numpy as np
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--input_image', type=str,
                     required=True, help='input image to use')
-parser.add_argument('--gt_image', type=str, default=None,
-                    help='ground truth of input image to use')
 parser.add_argument('--model', type=str, required=True,
                     help='model file to use')
 parser.add_argument('--output_filename', type=str,
@@ -46,18 +44,3 @@ out_img = Image.merge(
 out_img.save(opt.output_filename)
 print('output image saved to ', opt.output_filename)
 
-# calculate PSNR and SSIM if ground truth image is provided
-if opt.gt_image is not None:
-    from skimage.measure import compare_psnr, compare_ssim
-    gt_img = Image.open(opt.gt_image)
-
-    X = np.array(out_img)
-    Y = np.array(gt_img)
-
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        pnsr_val = compare_psnr(Y, X, data_range=255)
-        ssim_val = compare_ssim(X, Y, data_range=255, multichannel=True)
-
-    print(f"psnr: {pnsr_val}, ssim: {ssim_val}")
