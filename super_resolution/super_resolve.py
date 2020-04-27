@@ -47,4 +47,17 @@ out_img.save(opt.output_filename)
 print('output image saved to ', opt.output_filename)
 
 # calculate PSNR and SSIM if ground truth image is provided
+if opt.gt_image is not None:
+    from skimage.measure import compare_psnr, compare_ssim
+    gt_img = Image.open(opt.gt_image)
 
+    X = np.array(out_img)
+    Y = np.array(gt_img)
+
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        pnsr_val = compare_psnr(Y, X, data_range=255)
+        ssim_val = compare_ssim(X, Y, data_range=255, multichannel=True)
+
+    print(f"psnr: {pnsr_val}, ssim: {ssim_val}")
