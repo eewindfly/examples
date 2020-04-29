@@ -47,14 +47,18 @@ isp_test:
 	done
 
 gen_test_images:
+	mkdir -p ./isp_test_images/LR_bilinear
+	convert './isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg' -filter Triangle -resize 50% './isp_test_images/LR_bilinear/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png'
+	convert ./isp_test_images/HR/Scene4.jpg -filter Triangle -resize 50% ./isp_test_images/LR_bilinear/Scene4.png
+	convert ./isp_test_images/HR/Scene5.jpg -filter Triangle -resize 50% ./isp_test_images/LR_bilinear/Scene5.png
 	mkdir -p ./isp_test_images/LR_bicubic
-	convert './isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg' -interpolate bicubic -resize 960 './isp_test_images/LR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png'
-	convert ./isp_test_images/HR/Scene4.jpg -interpolate bicubic -resize 960 ./isp_test_images/LR_bicubic/Scene4.png
-	convert ./isp_test_images/HR/Scene5.jpg -interpolate bicubic -resize 960 ./isp_test_images/LR_bicubic/Scene5.png
+	convert './isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg' -filter Catrom -resize 50% './isp_test_images/LR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png'
+	convert ./isp_test_images/HR/Scene4.jpg -filter Catrom -resize 50% ./isp_test_images/LR_bicubic/Scene4.png
+	convert ./isp_test_images/HR/Scene5.jpg -filter Catrom -resize 50% ./isp_test_images/LR_bicubic/Scene5.png
 	mkdir -p ./isp_test_images/SR_bicubic
-	convert './isp_test_images/LR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' -interpolate bicubic -resize 1920 './isp_test_images/SR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png'
-	convert ./isp_test_images/LR_bicubic/Scene4.png -interpolate bicubic -resize 1920 ./isp_test_images/SR_bicubic/Scene4.png
-	convert ./isp_test_images/LR_bicubic/Scene5.png -interpolate bicubic -resize 1920 ./isp_test_images/SR_bicubic/Scene5.png
+	convert './isp_test_images/LR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' -filter Catrom -resize 200% './isp_test_images/SR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png'
+	convert ./isp_test_images/LR_bicubic/Scene4.png -filter Catrom -resize 200% ./isp_test_images/SR_bicubic/Scene4.png
+	convert ./isp_test_images/LR_bicubic/Scene5.png -filter Catrom -resize 200% ./isp_test_images/SR_bicubic/Scene5.png
 
 compare:
 	python measure.py --result_image ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
