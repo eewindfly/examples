@@ -62,7 +62,7 @@ def get_training_set(upscale_factor):
     train_dirs = [train_dir1, train_dir2]  # TODO: support multi datasets
     crop_size = calculate_valid_crop_size(256, upscale_factor)
 
-    return DatasetFromFolder(train_dir1,
+    return DatasetFromFolder(train_dir2,
                              input_transform=input_transform(
                                  crop_size, upscale_factor),
                              target_transform=target_transform(crop_size))
