@@ -59,7 +59,11 @@ def get_training_set(upscale_factor):
     root_dir = "./dataset/DIV2K"  # prepare this dataset manually
     train_dir2 = join(root_dir, "train")
 
-    train_dirs = [train_dir1, train_dir2]  # TODO: support multi datasets
+    # download Flickr2K
+    root_dir = "./dataset/Flickr2K"  # prepare this dataset manually
+    train_dir3 = root_dir
+
+    train_dirs = [train_dir1, train_dir2, train_dir3]  # TODO: support multi datasets
     crop_size = calculate_valid_crop_size(256, upscale_factor)
 
     return DatasetFromFolder(train_dir2,
