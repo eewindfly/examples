@@ -5,7 +5,7 @@ DOCKER_IMAGE_NAME=${PROJECT_NAME}/pytorch:1.5-cuda10.1-cudnn7-devel
 build:
 	docker build -t ${DOCKER_IMAGE_NAME} .
 run:
-	docker run --gpus all -it --user $(shell id -u):$(shell id -g) -v ${HOME}/workspace:/workspace --net host ${DOCKER_IMAGE_NAME} bash
+	docker run --gpus all -it --user $(shell id -u):$(shell id -g) -v ${HOME}/workspace:/workspace --net host --shm-size 8G ${DOCKER_IMAGE_NAME} bash
 
 EPOCH=100
 train:
