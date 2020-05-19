@@ -64,7 +64,7 @@ testing_data_loader = DataLoader(dataset=test_set,
                                  shuffle=False)
 
 print('===> Building model')
-model = Net(upscale_factor=opt.upscale_factor).to(device)
+model = Net(upscale_factor=opt.upscale_factor, num_img_channel=1).to(device)
 criterion = nn.MSELoss()
 
 optimizer = optim.Adam(model.parameters(), lr=opt.lr)
