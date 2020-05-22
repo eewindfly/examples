@@ -11,7 +11,7 @@ EPOCH=100
 train:
 	python main.py --cuda --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
 
-test:
+eval_sr:
 	mkdir -p ./isp_test_images/SR_espcn
 	i=${EPOCH} ; while [[ $$i -le ${EPOCH} ]] ; do \
 		python super_resolve.py --cuda \
@@ -28,7 +28,7 @@ test:
 			--output_filename ./isp_test_images/SR_espcn/Scene5_epoch$$i.png ; \
 		((i = i + 1)) ; \
 	done
-isp_test:
+eval_sr_isp:
 	mkdir -p ./isp_test_images/SR_espcn
 	i=${EPOCH} ; while [[ $$i -le ${EPOCH} ]] ; do \
 		python super_resolve.py --cuda \
@@ -45,6 +45,21 @@ isp_test:
 			--output_filename ./isp_test_images/SR_espcn/Scene5_epoch$$i.png ; \
 		((i = i + 1)) ; \
 	done
+eval_denoise_sr:
+	mkdir -p ./isp_test_images/SR_espcn
+	python super_resolve.py --cuda \
+		--input_image './isp_test_images/LR_bicubic_awgn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' \
+		--model model_epoch_${EPOCH}.pth \
+		--output_filename ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png
+	python super_resolve.py --cuda \
+		--input_image ./isp_test_images/LR_bicubic_awgn/Scene4.png \
+		--model model_epoch_${EPOCH}.pth \
+		--output_filename ./isp_test_images/SR_espcn/Scene4_epoch${EPOCH}.png
+	python super_resolve.py --cuda \
+		--input_image ./isp_test_images/LR_bicubic_awgn/Scene5.png \
+		--model model_epoch_${EPOCH}.pth \
+		--output_filename ./isp_test_images/SR_espcn/Scene5_epoch${EPOCH}.png
+
 
 gen_test_lr_images:
 	mkdir -p ./isp_test_images/LR_bilinear
@@ -65,14 +80,14 @@ gen_test_noise_images:
 	convert ./isp_test_images/LR_bicubic/Scene4.png +noise gaussian -attenuate 1 ./isp_test_images/LR_bicubic_awgn/Scene4.png
 	convert ./isp_test_images/LR_bicubic/Scene5.png +noise gaussian -attenuate 1 ./isp_test_images/LR_bicubic_awgn/Scene5.png
 
-compare:
+compare_sr:
 	python measure.py --result_image ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
 	python measure.py --result_image ./isp_test_images/SR_espcn/Scene4_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/Scene4.jpg
 	python measure.py --result_image ./isp_test_images/SR_espcn/Scene5_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/Scene5.jpg
 	python measure.py --result_image ./isp_test_images/SR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
 	python measure.py --result_image ./isp_test_images/SR_bicubic/Scene4.png --gt_image ./isp_test_images/HR/Scene4.jpg
 	python measure.py --result_image ./isp_test_images/SR_bicubic/Scene5.png --gt_image ./isp_test_images/HR/Scene5.jpg
-isp_compare:
+compare_sr_isp:
 	python measure.py --result_image ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
 	python measure.py --result_image ./isp_test_images/SR_espcn/Scene4_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/Scene4.jpg
 	python measure.py --result_image ./isp_test_images/SR_espcn/Scene5_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/Scene5.jpg
