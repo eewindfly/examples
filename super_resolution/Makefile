@@ -16,15 +16,15 @@ eval_sr:
 	i=${EPOCH} ; while [[ $$i -le ${EPOCH} ]] ; do \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/LR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' \
-			--model model_epoch_$$i.pth \
+			--model ./models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch$$i.png ; \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/LR_bicubic/Scene4.png' \
-			--model model_epoch_$$i.pth \
+			--model ./models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/Scene4_epoch$$i.png ; \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/LR_bicubic/Scene5.png' \
-			--model model_epoch_$$i.pth \
+			--model ./models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/Scene5_epoch$$i.png ; \
 		((i = i + 1)) ; \
 	done
@@ -33,15 +33,15 @@ eval_sr_isp:
 	i=${EPOCH} ; while [[ $$i -le ${EPOCH} ]] ; do \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/ISP_LR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg' \
-			--model model_epoch_$$i.pth \
+			--model ./models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch$$i.png ; \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/ISP_LR/Scene4.jpg' \
-			--model model_epoch_$$i.pth \
+			--model ./models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/Scene4_epoch$$i.png ; \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/ISP_LR/Scene5.jpg' \
-			--model model_epoch_$$i.pth \
+			--model ./models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/Scene5_epoch$$i.png ; \
 		((i = i + 1)) ; \
 	done
@@ -49,15 +49,15 @@ eval_denoise_sr:
 	mkdir -p ./isp_test_images/SR_espcn
 	python super_resolve.py --cuda \
 		--input_image './isp_test_images/LR_bicubic_awgn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' \
-		--model model_epoch_${EPOCH}.pth \
+		--model ./models/model_epoch_${EPOCH}.pth \
 		--output_filename ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png
 	python super_resolve.py --cuda \
 		--input_image ./isp_test_images/LR_bicubic_awgn/Scene4.png \
-		--model model_epoch_${EPOCH}.pth \
+		--model ./models/model_epoch_${EPOCH}.pth \
 		--output_filename ./isp_test_images/SR_espcn/Scene4_epoch${EPOCH}.png
 	python super_resolve.py --cuda \
 		--input_image ./isp_test_images/LR_bicubic_awgn/Scene5.png \
-		--model model_epoch_${EPOCH}.pth \
+		--model ./models/model_epoch_${EPOCH}.pth \
 		--output_filename ./isp_test_images/SR_espcn/Scene5_epoch${EPOCH}.png
 
 
