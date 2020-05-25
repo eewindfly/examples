@@ -10,6 +10,8 @@ run:
 EPOCH=100
 train:
 	python main.py --cuda --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
+train_denoising:
+	python train_denoising.py --cuda --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
 
 eval_sr:
 	mkdir -p ./isp_test_images/SR_espcn

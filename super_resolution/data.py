@@ -5,7 +5,22 @@ import tarfile
 from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
 from PIL import Image
 
-from dataset import DatasetFromFolder
+from dataset import DatasetFromFolder, load_img_rgb_channels
+
+
+import torch
+class AdditiveWhiteGaussianNoise(object):
+    def __init__(self, mean=0., std=1.):
+        self.std = std
+        self.mean = mean
+
+    def __call__(self, tensor):
+        result = tensor + torch.randn(tensor.size()) * self.std + self.mean
+        result = torch.clamp(result, 0, 1)
+        return result
+
+    def __repr__(self):
+        return self.__class__.__name__ + '(mean={0}, std={1})'.format(self.mean, self.std)
 
 
 def download_bsd300(dest="dataset"):
@@ -36,12 +51,23 @@ def calculate_valid_crop_size(crop_size, upscale_factor):
     return crop_size - (crop_size % upscale_factor)
 
 
-def input_transform(crop_size, upscale_factor):
-    return Compose([
-        CenterCrop(crop_size),
-        Resize(crop_size // upscale_factor, interpolation=Image.BICUBIC),
-        ToTensor(),
-    ])
+def input_transform(crop_size, upscale_factor=None, awgn_sigma=None):
+    actions = [
+        CenterCrop(crop_size)
+    ]
+    if upscale_factor is not None:
+        actions.append(
+            Resize(crop_size // upscale_factor, interpolation=Image.BICUBIC),
+        )
+    actions.append(
+        ToTensor()
+    )
+    if awgn_sigma is not None:
+        actions.append(
+            AdditiveWhiteGaussianNoise(std=awgn_sigma/255)
+        )
+
+    return Compose(actions)
 
 
 def target_transform(crop_size):
@@ -83,3 +109,28 @@ def get_test_set(upscale_factor):
                              input_transform=input_transform(
                                  crop_size, upscale_factor),
                              target_transform=target_transform(crop_size))
+
+# denoising
+def get_denoiser_training_set(awgn_sigma):
+    root_dir = "./dataset/DIV2K"  # prepare this dataset manually
+    train_dir = join(root_dir, "train")
+
+    crop_size = 256
+
+    return DatasetFromFolder(train_dir,
+                             input_transform=input_transform(
+                                 crop_size, awgn_sigma=awgn_sigma),
+                             target_transform=target_transform(crop_size),
+                             load_img_func=load_img_rgb_channels)
+
+def get_denoiser_testing_set(awgn_sigma):
+    root_dir = download_bsd300()
+    test_dir = join(root_dir, "test")
+
+    crop_size = 256
+
+    return DatasetFromFolder(test_dir,
+                             input_transform=input_transform(
+                                 crop_size, awgn_sigma=awgn_sigma),
+                             target_transform=target_transform(crop_size),
+                             load_img_func=load_img_rgb_channels)

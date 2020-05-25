@@ -4,7 +4,7 @@ import torch.nn.init as init
 
 
 class Net(nn.Module):
-    def __init__(self, upscale_factor, num_img_channel=1):
+    def __init__(self, upscale_factor=1, num_img_channel=1):
         super(Net, self).__init__()
 
         self.relu = nn.ReLU()
