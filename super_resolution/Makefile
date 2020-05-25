@@ -47,6 +47,20 @@ eval_sr_isp:
 			--output_filename ./isp_test_images/SR_espcn/Scene5_epoch$$i.png ; \
 		((i = i + 1)) ; \
 	done
+eval_denoise:
+	mkdir -p ./isp_test_images/DN_ours
+	python test_denoising.py --cuda \
+		--input_image './isp_test_images/LR_bicubic_awgn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' \
+		--model ./denoising_models/model_epoch_${EPOCH}.pth \
+		--output_filename ./isp_test_images/DN_ours/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png
+	python test_denoising.py --cuda \
+		--input_image ./isp_test_images/LR_bicubic_awgn/Scene4.png \
+		--model ./denoising_models/model_epoch_${EPOCH}.pth \
+		--output_filename ./isp_test_images/DN_ours/Scene4_epoch${EPOCH}.png
+	python test_denoising.py --cuda \
+		--input_image ./isp_test_images/LR_bicubic_awgn/Scene5.png \
+		--model ./denoising_models/model_epoch_${EPOCH}.pth \
+		--output_filename ./isp_test_images/DN_ours/Scene5_epoch${EPOCH}.png
 eval_denoise_sr:
 	mkdir -p ./isp_test_images/SR_espcn
 	python super_resolve.py --cuda \
