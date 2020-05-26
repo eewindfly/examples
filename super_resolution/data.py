@@ -111,7 +111,7 @@ def get_test_set(upscale_factor):
                              target_transform=target_transform(crop_size))
 
 # denoising
-def get_denoiser_training_set(awgn_sigma):
+def get_denoising_training_set(awgn_sigma):
     root_dir = "./dataset/DIV2K"  # prepare this dataset manually
     train_dir = join(root_dir, "train")
 
@@ -123,7 +123,7 @@ def get_denoiser_training_set(awgn_sigma):
                              target_transform=target_transform(crop_size),
                              load_img_func=load_img_rgb_channels)
 
-def get_denoiser_testing_set(awgn_sigma):
+def get_denoising_testing_set(awgn_sigma):
     root_dir = download_bsd300()
     test_dir = join(root_dir, "test")
 

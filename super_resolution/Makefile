@@ -8,8 +8,8 @@ run:
 	docker run --gpus all -it --user $(shell id -u):$(shell id -g) -v ${HOME}/workspace:/workspace --net host --shm-size 8G ${DOCKER_IMAGE_NAME} bash
 
 EPOCH=100
-train:
-	python main.py --cuda --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
+train_sr:
+	python train_sr.py --cuda --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
 train_denoising:
 	python train_denoising.py --cuda --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
 
