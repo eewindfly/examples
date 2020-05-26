@@ -92,9 +92,9 @@ gen_test_lr_images:
 	convert ./isp_test_images/LR_bicubic/Scene5.png -filter Catrom -resize 200% ./isp_test_images/SR_bicubic/Scene5.png
 gen_test_noise_images:
 	mkdir -p ./isp_test_images/LR_bicubic_awgn
-	python3 add_noise.py --input_image './isp_test_images/LR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' --output_filename './isp_test_images/LR_bicubic_awgn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png'
-	python3 add_noise.py --input_image ./isp_test_images/LR_bicubic/Scene4.png --output_filename ./isp_test_images/LR_bicubic_awgn/Scene4.png
-	python3 add_noise.py --input_image ./isp_test_images/LR_bicubic/Scene5.png --output_filename ./isp_test_images/LR_bicubic_awgn/Scene5.png
+	python3 add_noise.py --input_image './isp_test_images/LR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' --output_filename './isp_test_images/LR_bicubic_awgn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' --sigma 25 --y_only
+	python3 add_noise.py --input_image ./isp_test_images/LR_bicubic/Scene4.png --output_filename ./isp_test_images/LR_bicubic_awgn/Scene4.png --sigma 25 --y_only
+	python3 add_noise.py --input_image ./isp_test_images/LR_bicubic/Scene5.png --output_filename ./isp_test_images/LR_bicubic_awgn/Scene5.png --sigma 25 --y_only
 
 compare_sr:
 	python measure.py --result_image ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
