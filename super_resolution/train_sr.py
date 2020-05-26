@@ -1,5 +1,6 @@
 from __future__ import print_function
 import argparse
+import os
 from math import log10
 
 import torch
@@ -9,70 +10,17 @@ from torch.utils.data import DataLoader
 from model import Net
 from data import get_training_set, get_test_set
 
-# Training settings
-parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
-parser.add_argument('--upscale_factor',
-                    type=int,
-                    required=True,
-                    help="super resolution upscale factor")
-parser.add_argument('--batchSize',
-                    type=int,
-                    default=64,
-                    help='training batch size')
-parser.add_argument('--testBatchSize',
-                    type=int,
-                    default=10,
-                    help='testing batch size')
-parser.add_argument('--nEpochs',
-                    type=int,
-                    default=2,
-                    help='number of epochs to train for')
-parser.add_argument('--lr',
-                    type=float,
-                    default=0.01,
-                    help='Learning Rate. Default=0.01')
-parser.add_argument('--cuda', action='store_true', help='use cuda?')
-parser.add_argument('--threads',
-                    type=int,
-                    default=4,
-                    help='number of threads for data loader to use')
-parser.add_argument('--seed',
-                    type=int,
-                    default=123,
-                    help='random seed to use. Default=123')
-opt = parser.parse_args()
+try:
+    device = torch.device("cuda")
+except:
+    device = torch.device("cpu")
 
-print(opt)
-
-if opt.cuda and not torch.cuda.is_available():
-    raise Exception("No GPU found, please run without --cuda")
-
-torch.manual_seed(opt.seed)
-
-device = torch.device("cuda" if opt.cuda else "cpu")
-
-print('===> Loading datasets')
-train_set = get_training_set(opt.upscale_factor)
-test_set = get_test_set(opt.upscale_factor)
-training_data_loader = DataLoader(dataset=train_set,
-                                  num_workers=opt.threads,
-                                  batch_size=opt.batchSize,
-                                  shuffle=True)
-testing_data_loader = DataLoader(dataset=test_set,
-                                 num_workers=opt.threads,
-                                 batch_size=opt.testBatchSize,
-                                 shuffle=False)
-
-print('===> Building model')
-model = Net(upscale_factor=opt.upscale_factor, num_img_channel=1).to(device)
-criterion = nn.MSELoss()
-
-optimizer = optim.Adam(model.parameters(), lr=opt.lr)
+import matplotlib.pyplot as plt
 
 
-def train(epoch):
+def train(epoch, model, optimizer, criterion, data_loader):
     epoch_loss = 0
-    for iteration, batch in enumerate(training_data_loader, 1):
+    for iteration, batch in enumerate(data_loader, 1):
         input, target = batch[0].to(device), batch[1].to(device)
 
         optimizer.zero_grad()
@@ -82,33 +30,108 @@ def train(epoch):
         optimizer.step()
 
         # print("===> Epoch[{}]({}/{}): Loss: {:.4f}".format(
-        #     epoch, iteration, len(training_data_loader), loss.item()))
+        #     epoch, iteration, len(data_loader), loss.item()))
 
     print("===> Epoch {} Complete: Avg. Loss: {:.4f}".format(
-        epoch, epoch_loss / len(training_data_loader)))
+        epoch, epoch_loss / len(data_loader)))
 
 
-def test():
+def test(model, criterion, data_loader):
     avg_psnr = 0
     with torch.no_grad():
-        for batch in testing_data_loader:
+        for batch in data_loader:
             input, target = batch[0].to(device), batch[1].to(device)
 
             prediction = model(input)
             mse = criterion(prediction, target)
             psnr = 10 * log10(1 / mse.item())
             avg_psnr += psnr
-    print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr /
-                                             len(testing_data_loader)))
+
+            # sample_input = torch.squeeze(input[0].cpu().permute(1, 2, 0))
+            # sample_target = torch.squeeze(target[0].cpu().permute(1, 2, 0))
+            # sample_result = torch.squeeze(prediction[0].cpu().permute(1, 2, 0))
+            # plt.imshow(sample_input, cmap='gray')
+            # plt.show()
+            # plt.imshow(sample_target, cmap='gray')
+            # plt.show()
+            # plt.imshow(sample_result, cmap='gray')
+            # plt.show()
+
+    print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(data_loader)))
 
 
-def checkpoint(epoch):
-    model_out_path = "model_epoch_{}.pth".format(epoch)
+def checkpoint(epoch, model, dirpath=""):
+    print(dirpath)
+    model_out_path = os.path.join(dirpath, "model_epoch_{}.pth".format(epoch))
     torch.save(model, model_out_path)
     print("Checkpoint saved to {}".format(model_out_path))
 
 
-for epoch in range(1, opt.nEpochs + 1):
-    train(epoch)
-    test()
-    checkpoint(epoch)
+if __name__ == "__main__":
+    # Training settings
+    parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
+    parser.add_argument('--upscale_factor',
+                        type=int,
+                        required=True,
+                        help="super resolution upscale factor")
+    parser.add_argument('--batchSize',
+                        type=int,
+                        default=64,
+                        help='training batch size')
+    parser.add_argument('--testBatchSize',
+                        type=int,
+                        default=10,
+                        help='testing batch size')
+    parser.add_argument('--nEpochs',
+                        type=int,
+                        default=2,
+                        help='number of epochs to train for')
+    parser.add_argument('--lr',
+                        type=float,
+                        default=0.01,
+                        help='Learning Rate. Default=0.01')
+    parser.add_argument('--cuda', action='store_true', help='use cuda?')
+    parser.add_argument('--threads',
+                        type=int,
+                        default=4,
+                        help='number of threads for data loader to use')
+    parser.add_argument('--seed',
+                        type=int,
+                        default=123,
+                        help='random seed to use. Default=123')
+    opt = parser.parse_args()
+
+    print(opt)
+
+    if opt.cuda and not torch.cuda.is_available():
+        raise Exception("No GPU found, please run without --cuda")
+
+    torch.manual_seed(opt.seed)
+
+    print('===> Loading datasets')
+    train_set = get_training_set(opt.upscale_factor)
+    test_set = get_test_set(opt.upscale_factor)
+    training_data_loader = DataLoader(dataset=train_set,
+                                      num_workers=opt.threads,
+                                      batch_size=opt.batchSize,
+                                      shuffle=True)
+    testing_data_loader = DataLoader(dataset=test_set,
+                                     num_workers=opt.threads,
+                                     batch_size=opt.testBatchSize,
+                                     shuffle=False)
+
+    print('===> Building model')
+    model = Net(upscale_factor=opt.upscale_factor,
+                num_img_channel=1).to(device)
+    criterion = nn.MSELoss()
+
+    optimizer = optim.Adam(model.parameters(), lr=opt.lr)
+
+    for epoch in range(1, opt.nEpochs + 1):
+        train(epoch,
+              model=model,
+              optimizer=optimizer,
+              criterion=criterion,
+              data_loader=training_data_loader)
+        test(model=model, criterion=criterion, data_loader=testing_data_loader)
+        checkpoint(epoch, model)
