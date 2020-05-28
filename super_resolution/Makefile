@@ -122,6 +122,13 @@ compare_sr:
 	python measure.py --result_image ./isp_test_images/SR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
 	python measure.py --result_image ./isp_test_images/SR_bicubic/Scene4.png --gt_image ./isp_test_images/HR/Scene4.jpg
 	python measure.py --result_image ./isp_test_images/SR_bicubic/Scene5.png --gt_image ./isp_test_images/HR/Scene5.jpg
+compare_denoising_sr:
+	python measure.py --result_image ./isp_test_images/DN_SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
+	python measure.py --result_image ./isp_test_images/DN_SR_espcn/Scene4_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/Scene4.jpg
+	python measure.py --result_image ./isp_test_images/DN_SR_espcn/Scene5_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/Scene5.jpg
+	python measure.py --result_image ./isp_test_images/SR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
+	python measure.py --result_image ./isp_test_images/SR_bicubic/Scene4.png --gt_image ./isp_test_images/HR/Scene4.jpg
+	python measure.py --result_image ./isp_test_images/SR_bicubic/Scene5.png --gt_image ./isp_test_images/HR/Scene5.jpg
 compare_sr_isp:
 	python measure.py --result_image ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg
 	python measure.py --result_image ./isp_test_images/SR_espcn/Scene4_epoch${EPOCH}.png --gt_image ./isp_test_images/HR/Scene4.jpg
