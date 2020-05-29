@@ -107,6 +107,9 @@ parser.add_argument('--seed',
                     type=int,
                     default=123,
                     help='random seed to use. Default=123')
+parser.add_argument('--residual',
+                    action='store_true',
+                    help='network use residual architecture? Default=False')
 if __name__ == "__main__":
     parser.add_argument('--upscale_factor',
                         type=int,
