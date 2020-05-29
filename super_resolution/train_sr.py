@@ -104,7 +104,6 @@ if __name__ == "__main__":
                         type=float,
                         default=0.01,
                         help='Learning Rate. Default=0.01')
-    parser.add_argument('--cuda', action='store_true', help='use cuda?')
     parser.add_argument('--threads',
                         type=int,
                         default=4,
@@ -116,9 +115,6 @@ if __name__ == "__main__":
     opt = parser.parse_args()
 
     print(opt)
-
-    if opt.cuda and not torch.cuda.is_available():
-        raise Exception("No GPU found, please run without --cuda")
 
     torch.manual_seed(opt.seed)
 

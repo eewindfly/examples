@@ -20,11 +20,11 @@ run:
 
 EPOCH=100
 train_sr:
-	python train_sr.py --cuda --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
+	python train_sr.py --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
 train_denoising:
-	python train_denoising.py --cuda --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
+	python train_denoising.py --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
 train_denoising_sr:
-	python train_denoising_sr.py --cuda --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
+	python train_denoising_sr.py --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
 
 
 eval_sr:

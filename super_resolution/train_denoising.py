@@ -12,7 +12,6 @@ from train_sr import train, test, checkpoint
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
-parser.add_argument('--cuda', action='store_true', help='use cuda?')
 parser.add_argument('--threads',
                     type=int,
                     default=4,
@@ -36,11 +35,6 @@ parser.add_argument('--lr',
 opt = parser.parse_args()
 
 print(opt)
-
-if opt.cuda and not torch.cuda.is_available():
-    raise Exception("No GPU found, please run without --cuda")
-
-device = torch.device("cuda" if opt.cuda else "cpu")
 
 print('===> Loading datasets')
 train_set = get_denoising_training_set(awgn_sigma=25)

@@ -33,7 +33,6 @@ parser.add_argument('--lr',
                     type=float,
                     default=0.01,
                     help='Learning Rate. Default=0.01')
-parser.add_argument('--cuda', action='store_true', help='use cuda?')
 parser.add_argument('--threads',
                     type=int,
                     default=4,
@@ -45,9 +44,6 @@ parser.add_argument('--seed',
 opt = parser.parse_args()
 
 print(opt)
-
-if opt.cuda and not torch.cuda.is_available():
-    raise Exception("No GPU found, please run without --cuda")
 
 device = torch.device("cuda" if opt.cuda else "cpu")
 
