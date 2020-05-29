@@ -9,39 +9,13 @@ from torch.utils.data import DataLoader
 from model import Net
 from data import get_sr_denoising_training_set, get_sr_denoising_testing_set
 
-from train_sr import train, test, checkpoint, device
+from train_sr import parser, train, test, checkpoint, device
 
 if __name__ == "__main__":
-    # Training settings
-    parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
     parser.add_argument('--upscale_factor',
                         type=int,
                         required=True,
                         help="super resolution upscale factor")
-    parser.add_argument('--batchSize',
-                        type=int,
-                        default=64,
-                        help='training batch size')
-    parser.add_argument('--testBatchSize',
-                        type=int,
-                        default=10,
-                        help='testing batch size')
-    parser.add_argument('--nEpochs',
-                        type=int,
-                        default=2,
-                        help='number of epochs to train for')
-    parser.add_argument('--lr',
-                        type=float,
-                        default=0.01,
-                        help='Learning Rate. Default=0.01')
-    parser.add_argument('--threads',
-                        type=int,
-                        default=4,
-                        help='number of threads for data loader to use')
-    parser.add_argument('--seed',
-                        type=int,
-                        default=123,
-                        help='random seed to use. Default=123')
     opt = parser.parse_args()
 
     print(opt)
