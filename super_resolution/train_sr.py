@@ -135,7 +135,8 @@ if __name__ == "__main__":
 
     print('===> Building model')
     model = Net(upscale_factor=opt.upscale_factor,
-                num_img_channel=1).to(device)
+                num_img_channel=1,
+                global_residual=opt.residual).to(device)
     criterion = nn.MSELoss()
 
     optimizer = optim.Adam(model.parameters(), lr=opt.lr)
