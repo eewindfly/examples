@@ -7,6 +7,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from skimage.measure import compare_ssim
+import numpy as np
+
 from model import Net
 from data import get_training_set, get_test_set
 
@@ -38,6 +41,7 @@ def train(epoch, model, optimizer, criterion, data_loader):
 
 def test(model, criterion, data_loader):
     avg_psnr = 0
+    avg_ssim = 0
     with torch.no_grad():
         for batch in data_loader:
             input, target = batch[0].to(device), batch[1].to(device)
@@ -46,6 +50,15 @@ def test(model, criterion, data_loader):
             mse = criterion(prediction, target)
             psnr = 10 * log10(1 / mse.item())
             avg_psnr += psnr
+
+            prediction = np.squeeze(
+                np.transpose(prediction.cpu().numpy(), (1, 2, 3, 0)))
+            target = np.squeeze(
+                np.transpose(target.cpu().numpy(), (1, 2, 3, 0)))
+            ssim = compare_ssim(
+                prediction, target, data_range=1,
+                multichannel=True)  # NOTE: multichannel is tricky
+            avg_ssim += ssim
 
             # sample_input = torch.squeeze(input[0].cpu().permute(1, 2, 0))
             # sample_target = torch.squeeze(target[0].cpu().permute(1, 2, 0))
@@ -58,6 +71,7 @@ def test(model, criterion, data_loader):
             # plt.show()
 
     print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(data_loader)))
+    print("===> Avg. SSIM: {:.4f}".format(avg_ssim / len(data_loader)))
 
 
 def checkpoint(epoch, model, dirpath=""):
