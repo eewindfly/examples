@@ -9,6 +9,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from skimage.measure import compare_ssim
 import numpy as np
+from torch.utils.tensorboard import SummaryWriter
 
 from model import Net
 from data import get_training_set, get_test_set
@@ -140,6 +141,14 @@ if __name__ == "__main__":
     criterion = nn.MSELoss()
 
     optimizer = optim.Adam(model.parameters(), lr=opt.lr)
+
+    # setup tensorboard
+    writer = SummaryWriter('logs/sr')
+
+    # write model to tensorboard
+    sample_inputs, sample_targets = next(iter(training_data_loader))
+    sample_inputs = sample_inputs.to(device)
+    writer.add_graph(model, sample_inputs)
 
     model_dirpath = "sr_models"
     os.makedirs(model_dirpath, exist_ok=True)

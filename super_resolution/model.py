@@ -29,7 +29,7 @@ class Net(nn.Module):
         x = self.relu(self.conv3(x))
         x = self.conv4(x)
         if self.global_residual:
-            x = input + x
+            x = torch.add(input, x)
         output = self.pixel_shuffle(x)
 
         return output

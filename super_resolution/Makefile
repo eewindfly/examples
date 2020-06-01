@@ -18,6 +18,10 @@ run:
 		${DOCKER_IMAGE_NAME} bash
 
 
+tb:
+	tensorboard --logdir ./logs
+
+
 EPOCH=100
 train_sr:
 	python train_sr.py --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001 --residual
