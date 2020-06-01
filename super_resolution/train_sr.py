@@ -2,6 +2,7 @@ from __future__ import print_function
 import argparse
 import os
 from math import log10
+import json
 
 import torch
 import torch.nn as nn
@@ -20,6 +21,9 @@ except:
     device = torch.device("cpu")
 
 import matplotlib.pyplot as plt
+
+NUM_THREADs = 4
+TEST_BATCH_SIZE = 100
 
 
 def train(epoch, model, optimizer, criterion, data_loader):
@@ -70,9 +74,13 @@ def test(model, criterion, data_loader):
             # plt.show()
             # plt.imshow(sample_result, cmap='gray')
             # plt.show()
+    avg_psnr /= len(data_loader)
+    avg_ssim /= len(data_loader)
 
-    print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(data_loader)))
-    print("===> Avg. SSIM: {:.4f}".format(avg_ssim / len(data_loader)))
+    print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr))
+    print("===> Avg. SSIM: {:.4f}".format(avg_ssim))
+
+    return avg_psnr, avg_ssim
 
 
 def checkpoint(epoch, model, dirpath=""):
@@ -83,15 +91,13 @@ def checkpoint(epoch, model, dirpath=""):
 
 
 # Training settings
+torch.manual_seed(123)
+
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--batchSize',
                     type=int,
                     default=64,
                     help='training batch size')
-parser.add_argument('--testBatchSize',
-                    type=int,
-                    default=10,
-                    help='testing batch size')
 parser.add_argument('--nEpochs',
                     type=int,
                     default=2,
@@ -100,14 +106,6 @@ parser.add_argument('--lr',
                     type=float,
                     default=0.01,
                     help='Learning Rate. Default=0.01')
-parser.add_argument('--threads',
-                    type=int,
-                    default=4,
-                    help='number of threads for data loader to use')
-parser.add_argument('--seed',
-                    type=int,
-                    default=123,
-                    help='random seed to use. Default=123')
 parser.add_argument('--residual',
                     action='store_true',
                     help='network use residual architecture? Default=False')
@@ -120,18 +118,16 @@ if __name__ == "__main__":
 
     print(opt)
 
-    torch.manual_seed(opt.seed)
-
     print('===> Loading datasets')
     train_set = get_training_set(opt.upscale_factor)
     test_set = get_test_set(opt.upscale_factor)
     training_data_loader = DataLoader(dataset=train_set,
-                                      num_workers=opt.threads,
+                                      num_workers=NUM_THREADs,
                                       batch_size=opt.batchSize,
                                       shuffle=True)
     testing_data_loader = DataLoader(dataset=test_set,
-                                     num_workers=opt.threads,
-                                     batch_size=opt.testBatchSize,
+                                     num_workers=NUM_THREADs,
+                                     batch_size=TEST_BATCH_SIZE,
                                      shuffle=False)
 
     print('===> Building model')
@@ -143,14 +139,16 @@ if __name__ == "__main__":
     optimizer = optim.Adam(model.parameters(), lr=opt.lr)
 
     # setup tensorboard
-    writer = SummaryWriter('logs/sr')
+    hyper_params_str = json.dumps(vars(opt))
+    log_dirpath = os.path.join('logs/sr', hyper_params_str)
+    writer = SummaryWriter(log_dirpath)
 
     # write model to tensorboard
     sample_inputs, sample_targets = next(iter(training_data_loader))
     sample_inputs = sample_inputs.to(device)
     writer.add_graph(model, sample_inputs)
 
-    model_dirpath = "sr_models"
+    model_dirpath = os.path.join("models/sr", hyper_params_str)
     os.makedirs(model_dirpath, exist_ok=True)
     for epoch in range(1, opt.nEpochs + 1):
         train(epoch,
@@ -158,5 +156,9 @@ if __name__ == "__main__":
               optimizer=optimizer,
               criterion=criterion,
               data_loader=training_data_loader)
-        test(model=model, criterion=criterion, data_loader=testing_data_loader)
+        psnr, ssim = test(model=model,
+                          criterion=criterion,
+                          data_loader=testing_data_loader)
+        writer.add_scalar("PSNR/test", psnr, epoch)
+        writer.add_scalar("SSIM/test", ssim, epoch)
         checkpoint(epoch, model, dirpath=model_dirpath)

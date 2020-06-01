@@ -24,11 +24,11 @@ tb:
 
 EPOCH=100
 train_sr:
-	python train_sr.py --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001 --residual
+	python train_sr.py --upscale_factor 2 --batchSize 4 --nEpochs ${EPOCH} --lr 0.001 --residual
 train_denoising:
-	python train_denoising.py --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
+	python train_denoising.py --batchSize 4 --nEpochs ${EPOCH} --lr 0.001
 train_denoising_sr:
-	python train_denoising_sr.py --upscale_factor 2 --batchSize 4 --testBatchSize 100 --nEpochs ${EPOCH} --lr 0.001
+	python train_denoising_sr.py --upscale_factor 2 --batchSize 4 --nEpochs ${EPOCH} --lr 0.001
 
 
 eval_sr:
@@ -36,15 +36,15 @@ eval_sr:
 	i=${EPOCH} ; while [[ $$i -le ${EPOCH} ]] ; do \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/LR_bicubic/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.png' \
-			--model ./models/model_epoch_$$i.pth \
+			--model ./sr_models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch$$i.png ; \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/LR_bicubic/Scene4.png' \
-			--model ./models/model_epoch_$$i.pth \
+			--model ./sr_models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/Scene4_epoch$$i.png ; \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/LR_bicubic/Scene5.png' \
-			--model ./models/model_epoch_$$i.pth \
+			--model ./sr_models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/Scene5_epoch$$i.png ; \
 		((i = i + 1)) ; \
 	done
@@ -53,15 +53,15 @@ eval_sr_isp:
 	i=${EPOCH} ; while [[ $$i -le ${EPOCH} ]] ; do \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/ISP_LR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg' \
-			--model ./models/model_epoch_$$i.pth \
+			--model ./sr_models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch$$i.png ; \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/ISP_LR/Scene4.jpg' \
-			--model ./models/model_epoch_$$i.pth \
+			--model ./sr_models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/Scene4_epoch$$i.png ; \
 		python super_resolve.py --cuda \
 			--input_image './isp_test_images/ISP_LR/Scene5.jpg' \
-			--model ./models/model_epoch_$$i.pth \
+			--model ./sr_models/model_epoch_$$i.pth \
 			--output_filename ./isp_test_images/SR_espcn/Scene5_epoch$$i.png ; \
 		((i = i + 1)) ; \
 	done
