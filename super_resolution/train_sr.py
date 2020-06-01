@@ -141,6 +141,8 @@ if __name__ == "__main__":
 
     optimizer = optim.Adam(model.parameters(), lr=opt.lr)
 
+    model_dirpath = "sr_models"
+    os.makedirs(model_dirpath, exist_ok=True)
     for epoch in range(1, opt.nEpochs + 1):
         train(epoch,
               model=model,
@@ -148,4 +150,4 @@ if __name__ == "__main__":
               criterion=criterion,
               data_loader=training_data_loader)
         test(model=model, criterion=criterion, data_loader=testing_data_loader)
-        checkpoint(epoch, model)
+        checkpoint(epoch, model, dirpath=model_dirpath)
