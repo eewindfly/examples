@@ -25,7 +25,7 @@ class AdditiveWhiteGaussianNoise(object):
             self.mean, self.std)
 
 
-def download_bsd300(dest="dataset"):
+def download_bsd300(dest="datasets"):
     output_image_dir = join(dest, "BSDS300/images")
 
     if not exists(output_image_dir):
