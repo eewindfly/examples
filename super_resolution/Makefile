@@ -37,22 +37,10 @@ eval_sr:
 		--output_dir ./isp_test_images/SR_espcn \
 		--model_dir ./models/sr
 eval_sr_isp:
-	mkdir -p ./isp_test_images/SR_espcn
-	i=${EPOCH} ; while [[ $$i -le ${EPOCH} ]] ; do \
-		python super_resolve.py --cuda \
-			--input_image './isp_test_images/ISP_LR/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100.jpg' \
-			--model ./sr_models/model_epoch_$$i.pth \
-			--output_filename ./isp_test_images/SR_espcn/1920X1080_-color=3_-bits=12_-frame=0_ISO12233_iso100_epoch$$i.png ; \
-		python super_resolve.py --cuda \
-			--input_image './isp_test_images/ISP_LR/Scene4.jpg' \
-			--model ./sr_models/model_epoch_$$i.pth \
-			--output_filename ./isp_test_images/SR_espcn/Scene4_epoch$$i.png ; \
-		python super_resolve.py --cuda \
-			--input_image './isp_test_images/ISP_LR/Scene5.jpg' \
-			--model ./sr_models/model_epoch_$$i.pth \
-			--output_filename ./isp_test_images/SR_espcn/Scene5_epoch$$i.png ; \
-		((i = i + 1)) ; \
-	done
+	python eval.py \
+		--input_dir ./isp_test_images/ISP_LR \
+		--output_dir ./isp_test_images/SR_espcn \
+		--model_dir ./models/sr
 eval_denoising:
 	mkdir -p ./isp_test_images/DN_ours
 	python test_denoising.py --cuda \
