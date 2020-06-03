@@ -78,11 +78,11 @@ def get_training_set(upscale_factor):
     train_dir1 = join(root_dir, "train")
 
     # download DIV2K
-    root_dir = "./dataset/DIV2K"  # prepare this dataset manually
+    root_dir = "./datasets/DIV2K"  # prepare this dataset manually
     train_dir2 = join(root_dir, "train")
 
     # download Flickr2K
-    root_dir = "./dataset/Flickr2K"  # prepare this dataset manually
+    root_dir = "./datasets/Flickr2K"  # prepare this dataset manually
     train_dir3 = root_dir
 
     train_dirs = [train_dir1, train_dir2,
@@ -108,7 +108,7 @@ def get_test_set(upscale_factor):
 
 # denoising
 def get_denoising_training_set(awgn_sigma):
-    root_dir = "./dataset/DIV2K"  # prepare this dataset manually
+    root_dir = "./datasets/DIV2K"  # prepare this dataset manually
     train_dir = join(root_dir, "train")
 
     crop_size = 256
@@ -135,7 +135,7 @@ def get_denoising_testing_set(awgn_sigma):
 
 # sr with denoising
 def get_sr_denoising_training_set(upscale_factor, awgn_sigma):
-    root_dir = "./dataset/DIV2K"  # prepare this dataset manually
+    root_dir = "./datasets/DIV2K"  # prepare this dataset manually
     train_dir = join(root_dir, "train")
 
     crop_size = calculate_valid_crop_size(256, upscale_factor)
