@@ -41,14 +41,15 @@ if __name__ == "__main__":
     input_image_files += glob.glob(os.path.join(opt.input_dir, "*.png"))
     
     for root, dirs, files in os.walk(opt.model_dir):
-        for dirpath in dirs:
-            model_path = get_latest_model_path_in_dir(os.path.join(root, dirpath))
+        for model_dirname in dirs:
+            model_path = get_latest_model_path_in_dir(os.path.join(root, model_dirname))
             if model_path is None:
                 continue
             
             for input_image in input_image_files:
-                filename = os.path.basename(input_image)
-                output_image_path = os.path.join(opt.output_dir, dirpath, filename)
-                print(output_image_path)
+                output_filename = os.path.basename(input_image)
+                output_filename = os.path.splitext(output_filename)[0] + ".png"
+                output_image_path = os.path.join(opt.output_dir, model_dirname, output_filename)
                 os.makedirs(os.path.dirname(output_image_path), exist_ok=True)
+                
                 resolve(model_path, input_image, output_image_path)
