@@ -109,6 +109,11 @@ parser.add_argument('--lr',
 parser.add_argument('--residual',
                     action='store_true',
                     help='network use residual architecture? Default=False')
+parser.add_argument(
+    '--space_to_depth_block_size',
+    type=int,
+    default=1,
+    help='space to depth block size at the first layer of model')
 if __name__ == "__main__":
     parser.add_argument('--upscale_factor',
                         type=int,
@@ -131,9 +136,11 @@ if __name__ == "__main__":
                                      shuffle=False)
 
     print('===> Building model')
-    model = Net(upscale_factor=opt.upscale_factor,
-                num_img_channel=1,
-                global_residual=opt.residual).to(device)
+    model = Net(
+        upscale_factor=opt.upscale_factor,
+        num_img_channel=1,
+        global_residual=opt.residual,
+        space_to_depth_block_size=opt.space_to_depth_block_size).to(device)
     criterion = nn.MSELoss()
 
     optimizer = optim.Adam(model.parameters(), lr=opt.lr)

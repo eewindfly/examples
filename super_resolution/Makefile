@@ -24,7 +24,7 @@ tb:
 
 EPOCH=100
 train_sr:
-	python train_sr.py --upscale_factor 2 --batchSize 4 --nEpochs ${EPOCH} --lr 0.001 --residual
+	python train_sr.py --upscale_factor 2 --batchSize 4 --nEpochs ${EPOCH} --lr 0.001 --residual --space_to_depth_block_size 2
 train_denoising:
 	python train_denoising.py --batchSize 4 --nEpochs ${EPOCH} --lr 0.001
 train_denoising_sr:
