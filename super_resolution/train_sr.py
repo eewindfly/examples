@@ -77,7 +77,7 @@ def test(model, criterion, data_loader):
     avg_psnr /= len(data_loader)
     avg_ssim /= len(data_loader)
 
-    print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr))
+    print("===> Avg. PSNR: {:.2f} dB".format(avg_psnr))
     print("===> Avg. SSIM: {:.4f}".format(avg_ssim))
 
     return avg_psnr, avg_ssim
